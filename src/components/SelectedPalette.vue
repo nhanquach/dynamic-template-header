@@ -16,13 +16,16 @@
 
     </div>
     <div class="colors">
-      <div v-for="(color, index) in palette.colors" :key="index" class="color-box">
+      <div v-for="(color, index) in localColors" :key="index" class="color-box">
         <div :style="{ backgroundColor: color.hex }" class="color-box__color" :data-copy-text="copyStatus"
           @click="copyHexCode(color.hex)" />
         <div class="color-box__description">
           <div class="color-box-description__name">{{ color.name }}</div>
           <div class="color-box-description__hex-code">
-            {{ color.hex }}
+            <label :for="`color-picker-${index}`">
+              {{ color.hex }}
+              <input type="color" v-model="color.hex" :id="`color-picker-${index}`" class="color-picker">
+            </label>
           </div>
         </div>
       </div>
@@ -41,6 +44,8 @@ import { getBestContrastColor } from '../utils/colors';
 const props = defineProps<{
   palette: Combination
 }>()
+
+const localColors = ref(props.palette.colors)
 
 const liked = ref(false)
 const copyStatus = ref('Copy')
@@ -160,7 +165,18 @@ const copyHexCode = async (hexCode: string) => {
 
   .color-box-description__hex-code {
     text-transform: uppercase;
-    color: #a6a3a4
+    color: #a6a3a4;
+
+    label {
+      cursor: pointer;
+
+      .color-picker {
+        display: block;
+        width: 0;
+        height: 0;
+        border: 0;
+      }
+    }
   }
 }
 </style>
