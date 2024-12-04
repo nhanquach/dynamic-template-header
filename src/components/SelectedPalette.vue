@@ -1,14 +1,18 @@
 <template>
   <div class="selected-palette">
-    <img :src="image" alt="Selected Palette" />
-    <div class="like-counts">
-      <button class="like-button" @click="like">
-        {{ likeCount }}
-      </button>
+    <div class="palette-thumbnail">
+      <img :src='"../_images/Thumbnail/" + props.palette.featuredImage.url' class="palette-thumbnail__image"
+        alt="palette thumbnail" />
+      <div class="like-counts">
+        <button class="like-button" @click="like">
+          {{ likeCount }}
+        </button>
+      </div>
     </div>
     <div class="colors">
-      <div v-for="(color, index) in colors" :key="index" class="color-box">
-        <div :style="{ backgroundColor: color.hex }" class="color-box__color" />
+      <div v-for="(color, index) in palette.colors" :key="index" class="color-box">
+        <div :style="{ backgroundColor: color.hex }" class="color-box__color" :data-copy-text="copyStatus"
+          @click="copyHexCode(color.hex)" />
         <div class="color-box__description">
           <div class="color-box-description__name">{{ color.name }}</div>
           <div class="color-box-description__hex-code">{{ color.hex }}</div>
@@ -26,13 +30,8 @@ const props = defineProps<{
   palette: Combination
 }>()
 
-console.log({ props })
-
 const liked = ref(false)
-
-// TODO: Remove computed and just use props
-const colors = computed(() => props.palette.colors)
-const image = computed(() => "../_images/Thumbnail/" + props.palette.featuredImage.url)
+const copyStatus = ref('Copy')
 
 const like = () => {
   liked.value = !liked.value
@@ -41,6 +40,20 @@ const like = () => {
 const likeCount = computed(() => {
   return liked.value ? props.palette.likes + 1 : props.palette.likes
 })
+
+const copyHexCode = async (hexCode: string) => {
+  try {
+    await navigator.clipboard.writeText(hexCode)
+    copyStatus.value = '✓'
+  } catch (e) {
+    console.error(e)
+    copyStatus.value = 'Cannot copy'
+  } finally {
+    setTimeout(() => {
+      copyStatus.value = 'Copy'
+    }, 500);
+  }
+}
 
 </script>
 
@@ -54,8 +67,14 @@ const likeCount = computed(() => {
   width: 100%;
 }
 
-img {
+.palette-thumbnail {
   max-width: 600px;
+  display: flex;
+  position: relative
+}
+
+.palette-thumbnail__image {
+  width: 100%;
   height: auto;
 }
 
@@ -75,7 +94,26 @@ img {
 .color-box__color {
   width: 150px;
   height: 100px;
+  position: relative;
+  cursor: pointer
 }
+
+.color-box__color::before {
+  content: attr(data-copy-text);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: white;
+  font-weight: bold;
+}
+
+.color-box__color:hover::before {
+  opacity: 1;
+}
+
 
 .color-box__description {
   display: flex;
@@ -88,6 +126,11 @@ img {
   .color-box-description__name {
     font-weight: 700;
     text-decoration: underline;
+  }
+
+  .color-box-description__hex-code {
+    text-transform: uppercase;
+    color: #a6a3a4
   }
 }
 </style>
