@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onUpdated } from 'vue';
 
-import HeaderText from './components/HeaderText.vue';
 import BreadCrumb from './components/BreadCrumb.vue';
 import SelectedPalette from './components/SelectedPalette.vue';
 import RelatedCombinations from './components/RelatedCombinations.vue';
@@ -11,25 +10,21 @@ import BrowseMore from './components/BrowseMore.vue';
 
 const { combinations } = json
 
-const pathname = window.location.pathname;
-const selectedPaletteId = ref(Number(pathname.replace("/", '')) || combinations[0].combination.id);
+const path = window.location.pathname.split('/').pop();
+const selectedPaletteId = ref(Number(path) || combinations[0].combination.id);
 
 const selectedPalette = computed(() => {
-  return combinations.find((comp) => {
-    return comp.combination.id === selectedPaletteId.value
+  return combinations.find(({ combination }) => {
+    return combination.id === selectedPaletteId.value
   })
 })
 
 const setSelectedPalette = (id: number) => {
   selectedPaletteId.value = id
-  window.location.pathname = `/${id}`;
+  history.pushState({}, '', `/${id}`)
 }
 
-console.log(
-  selectedPalette.value
-)
-
-onMounted(() => {
+onUpdated(() => {
   if (!selectedPalette.value) {
     setTimeout(() => {
       setSelectedPalette(combinations[0].combination.id)
@@ -41,17 +36,41 @@ onMounted(() => {
 
 <template>
   <main v-if="!selectedPalette">Color palette not found.<br />Navigating to the default color palette</main>
-  <main v-else class="main-content">
-    <BreadCrumb :name="selectedPalette.combination.name" />
-    <HeaderText :name="selectedPalette.combination.name" />
-    <SelectedPalette :palette="selectedPalette.combination" />
-    <RelatedCombinations :relatedPalettes="selectedPalette.relatedCombinations" @select-palette="setSelectedPalette" />
-    <BrowseMore />
-  </main>
+  <template v-else>
+    <div class="background" :style="{ backgroundColor: selectedPalette.combination.color.hex }"></div>
+    <main class="main-content">
+      <BreadCrumb :name="selectedPalette.combination.name" />
+      <SelectedPalette :palette="selectedPalette.combination" />
+      <RelatedCombinations :relatedPalettes="selectedPalette.relatedCombinations"
+        @select-palette="setSelectedPalette" />
+      <BrowseMore :button-color="selectedPalette.combination.color.hex" />
+    </main>
+  </template>
 </template>
 
 <style scoped>
 .main-content {
-  text-align: center
+  position: relative;
+  text-align: center;
+  z-index: 20;
+}
+
+.background {
+  height: 300px;
+  width: 100%;
+  position: absolute;
+  z-index: 0;
+}
+
+.background::after {
+  content: '';
+  display: block;
+  background-image: url('/_images/Asset/foreground.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
 }
 </style>
