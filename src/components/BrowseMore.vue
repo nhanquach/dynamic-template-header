@@ -15,7 +15,6 @@ const props = defineProps<{ buttonColor?: string }>();
 const textColor = computed(() => {
     return getBestContrastColor(props.buttonColor, '#000')
 })
-
 </script>
 
 <style scoped>

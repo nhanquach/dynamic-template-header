@@ -2,9 +2,8 @@
   <div class="selected-palette">
     <HeaderText :name="palette.name" :color="textColor" />
     <div class="palette-thumbnail">
-      <img :src='"../_images/Thumbnail/" + props.palette.featuredImage.url' class="palette-thumbnail__image"
-        alt="palette thumbnail" />
-
+      <img :src='"../_images/Thumbnail/" + palette.featuredImage.url' class="palette-thumbnail__image"
+        :alt="`Thumbnail image for color ${palette.name}`" />
       <button class="like-button" @click="like">
         <span class="like-button__icon">
           <HeartIcon :liked="liked" />
@@ -13,11 +12,10 @@
           {{ likeCount }}
         </span>
       </button>
-
     </div>
     <div class="colors">
       <div v-for="(color, index) in localColors" :key="index" class="color-box">
-        <div :style="{ backgroundColor: color.hex }" class="color-box__color" :data-copy-text="copyStatus"
+        <div :style="{ backgroundColor: color.hex }" class="color-box__color" :data-copy-status="copyStatus"
           @click="copyHexCode(color.hex)" />
         <div class="color-box__description">
           <div class="color-box-description__name">{{ color.name }}</div>
@@ -134,7 +132,7 @@ const copyHexCode = async (hexCode: string) => {
 }
 
 .color-box__color::before {
-  content: attr(data-copy-text);
+  content: attr(data-copy-status);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -148,7 +146,6 @@ const copyHexCode = async (hexCode: string) => {
 .color-box__color:hover::before {
   opacity: 1;
 }
-
 
 .color-box__description {
   display: flex;

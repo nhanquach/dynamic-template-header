@@ -1,35 +1,27 @@
-const hexToRgb = (hex: string): [number, number, number] => {
-  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  hex = hex.replace(shorthandRegex, (_m, r, g, b) => r + r + g + g + b + b);
+function getLuminance(hexColor: string) {
+  hexColor = hexColor.replace("#", "");
 
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? [
-        parseInt(result[1], 16),
-        parseInt(result[2], 16),
-        parseInt(result[3], 16),
-      ]
-    : [0, 0, 0];
-};
+  const r = parseInt(hexColor.slice(0, 2), 16);
+  const g = parseInt(hexColor.slice(2, 4), 16);
+  const b = parseInt(hexColor.slice(4, 6), 16);
 
-const getLuminance = (r: number, g: number, b: number): number => {
-  const a = [r, g, b].map((v) => {
-    v /= 255;
-    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-  });
-  return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
-};
+  const relativeLuminance =
+    0.2126 * Math.pow(r / 255, 2.2) +
+    0.7152 * Math.pow(g / 255, 2.2) +
+    0.0722 * Math.pow(b / 255, 2.2);
+
+  return relativeLuminance;
+}
 
 export const getBestContrastColor = (
   hexColor?: string,
   defaultColor?: string
 ): string => {
   if (!hexColor) {
-    return defaultColor || "#000";
+    return defaultColor || "#000000";
   }
 
-  const [r, g, b] = hexToRgb(hexColor);
-  const luminance = getLuminance(r, g, b);
+  const luminance = getLuminance(hexColor);
 
-  return luminance > 0.179 ? "#000000" : "#FFFFFF";
+  return luminance > 0.1 ? "#000000" : "#FFFFFF";
 };

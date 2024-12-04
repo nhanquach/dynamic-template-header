@@ -15,6 +15,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+
 import { RelatedCombination } from '../types/combination';
 import ColorPalette from './ColorPalette.vue';
 
@@ -49,8 +50,8 @@ const handleSelect = (palette: RelatedCombination) => {
 .grid {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(2, calc(64px*4));
-    gap: 16px;
+    grid-template-columns: repeat(2, calc(var(--color-box-width)*4));
+    gap: 24px;
     grid-column-gap: 32px;
     justify-content: center;
 }
@@ -70,8 +71,8 @@ const handleSelect = (palette: RelatedCombination) => {
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    font-size: 12px;
-    border-radius: 12px;
-    height: 100%;
+    border-radius: 8px;
+    height: var(--color-box-height);
+    padding: 0;
 }
 </style>
