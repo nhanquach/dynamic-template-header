@@ -55,7 +55,7 @@ onUpdated(() => {
 }
 
 .background {
-  height: 300px;
+  height: 500px;
   width: 100%;
   position: absolute;
   z-index: 0;
