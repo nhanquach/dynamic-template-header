@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ liked: boolean }>()
+defineProps<{ liked?: boolean }>()
 
 </script>
 

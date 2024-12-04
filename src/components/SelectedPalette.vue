@@ -1,13 +1,19 @@
 <template>
   <div class="selected-palette">
+    <HeaderText :name="palette.name" :color="textColor" />
     <div class="palette-thumbnail">
       <img :src='"../_images/Thumbnail/" + props.palette.featuredImage.url' class="palette-thumbnail__image"
         alt="palette thumbnail" />
-      <div class="like-counts">
-        <button class="like-button" @click="like">
+
+      <button class="like-button" @click="like">
+        <span class="like-button__icon">
+          <HeartIcon :liked="liked" />
+        </span>
+        <span class="like-button__count">
           {{ likeCount }}
-        </button>
-      </div>
+        </span>
+      </button>
+
     </div>
     <div class="colors">
       <div v-for="(color, index) in palette.colors" :key="index" class="color-box">
@@ -15,7 +21,9 @@
           @click="copyHexCode(color.hex)" />
         <div class="color-box__description">
           <div class="color-box-description__name">{{ color.name }}</div>
-          <div class="color-box-description__hex-code">{{ color.hex }}</div>
+          <div class="color-box-description__hex-code">
+            {{ color.hex }}
+          </div>
         </div>
       </div>
     </div>
@@ -26,6 +34,10 @@
 import { ref, computed } from 'vue'
 import { Combination } from '../types/combination';
 
+import HeartIcon from './HeartIcon.vue';
+import HeaderText from './HeaderText.vue';
+import { getBestContrastColor } from '../utils/colors';
+
 const props = defineProps<{
   palette: Combination
 }>()
@@ -33,13 +45,17 @@ const props = defineProps<{
 const liked = ref(false)
 const copyStatus = ref('Copy')
 
-const like = () => {
-  liked.value = !liked.value
-}
+const textColor = computed(() => {
+  return getBestContrastColor(props.palette.color.hex)
+})
 
 const likeCount = computed(() => {
   return liked.value ? props.palette.likes + 1 : props.palette.likes
 })
+
+const like = () => {
+  liked.value = !liked.value
+}
 
 const copyHexCode = async (hexCode: string) => {
   try {
@@ -54,7 +70,6 @@ const copyHexCode = async (hexCode: string) => {
     }, 500);
   }
 }
-
 </script>
 
 <style scoped>
@@ -78,11 +93,26 @@ const copyHexCode = async (hexCode: string) => {
   height: auto;
 }
 
-.like-counts {
+.like-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
   position: absolute;
-  top: 0;
-  right: 0;
-  padding: 16px;
+  top: 16px;
+  right: 16px;
+  padding: 8px;
+
+  .like-button__icon {
+    height: 24px;
+    width: 24px;
+    display: block;
+  }
+
+  .like-button__count {
+    font-size: 16px;
+  }
+
 }
 
 .colors {

@@ -1,14 +1,16 @@
 <template>
   <div class="palette">
-    <div class="color-box-container">
+    <div class="palette__colors">
       <div class="color-box" v-for="color in palette.colors" :key="color" :style="{ backgroundColor: color }" />
     </div>
     <div class="palette__name">{{ palette.name }}</div>
     <div class="palette__likes">
-      <span class="heart-icon">
+      <span class="palette-likes__icon">
         <HeartIcon :liked="palette.liked" />
       </span>
-      {{ palette.likes }}
+      <span class="palette-likes__count">
+        {{ palette.likes }}
+      </span>
     </div>
   </div>
 </template>
@@ -16,7 +18,7 @@
 <script setup lang="ts">
 import HeartIcon from './HeartIcon.vue';
 
-import { RelatedCombination } from '../types/combination.d.ts'
+import { RelatedCombination } from '../types/combination'
 
 const props = defineProps<{
   palette: RelatedCombination
@@ -46,13 +48,18 @@ const props = defineProps<{
     bottom: 0;
     right: 8px;
     display: flex;
+    align-items: center;
     gap: 4px;
 
 
-    .heart-icon {
+    .palette-likes__icon {
       width: 1.5rem;
       height: 1.5rem;
       display: block;
+    }
+
+    .palette-likes__count {
+      font-size: 14px;
     }
   }
 }
@@ -68,7 +75,7 @@ const props = defineProps<{
   }
 }
 
-.color-box-container {
+.palette__colors {
   display: flex;
   justify-content: center;
   align-items: center;
