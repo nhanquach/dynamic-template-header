@@ -4,11 +4,11 @@
         <div class="grid">
             <div v-for="palette in displayPalettes" :key="palette.id" class="palette-item"
                 @click="handleSelect(palette)">
-                <ColorPalette :colors="palette.colors" />
+                <ColorPalette :palette="palette" />
             </div>
-            <div class="load-more" @click="loadMore" v-if="displayPalettes.length < relatedPalettes.length">
+            <button class="load-more" @click="loadMore" v-if="displayPalettes.length < relatedPalettes.length">
                 See more combinations
-            </div>
+            </button>
         </div>
     </div>
 </template>
@@ -43,18 +43,19 @@ const handleSelect = (palette: RelatedCombination) => {
 
 <style scoped>
 .related-combinations {
-    padding: 20px;
+    padding: 16px;
 }
 
 .grid {
+    width: 100%;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, calc(64px*4));
     gap: 16px;
+    grid-column-gap: 32px;
+    justify-content: center;
 }
 
 .palette-item {
-    border-radius: 20px;
-    border: 1px solid red;
     display: flex;
     align-items: center;
     justify-content: stretch;

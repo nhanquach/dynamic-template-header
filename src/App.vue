@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 import HeaderText from './components/HeaderText.vue';
 import BreadCrumb from './components/BreadCrumb.vue';
@@ -11,7 +11,8 @@ import BrowseMore from './components/BrowseMore.vue';
 
 const { combinations } = json
 
-const selectedPaletteId = ref(719)
+const pathname = window.location.pathname;
+const selectedPaletteId = ref(Number(pathname.replace("/", '')) || combinations[0].combination.id);
 
 const selectedPalette = computed(() => {
   return combinations.find((comp) => {
@@ -20,18 +21,26 @@ const selectedPalette = computed(() => {
 })
 
 const setSelectedPalette = (id: number) => {
-  console.log({ id })
   selectedPaletteId.value = id
+  window.location.pathname = `/${id}`;
 }
 
 console.log(
   selectedPalette.value
 )
 
+onMounted(() => {
+  if (!selectedPalette.value) {
+    setTimeout(() => {
+      setSelectedPalette(combinations[0].combination.id)
+    }, 1000);
+  }
+})
+
 </script>
 
 <template>
-  <main v-if="!selectedPalette">Color palette not found</main>
+  <main v-if="!selectedPalette">Color palette not found.<br />Navigating to the default color palette</main>
   <main v-else class="main-content">
     <BreadCrumb :name="selectedPalette.combination.name" />
     <HeaderText :name="selectedPalette.combination.name" />
