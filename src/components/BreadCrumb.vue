@@ -16,6 +16,10 @@ defineProps<{ name: string }>()
 .breadcrumb {
     display: flex;
     list-style: none;
+    width: 100%;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
 
     .breadcrumb-item a {
         color: #6a504a
